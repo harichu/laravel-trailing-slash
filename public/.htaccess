@@ -6,10 +6,17 @@
     RewriteEngine On
 
     # Redirect To Trailing Slashes If Not A Folder Or A File...
+    RewriteCond %{HTTPS}s ^(on(s)|offs)$
+    RewriteRule ^ - [env=proto:http%2]
+
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_URI} (.+[^/])$
+    RewriteCond %{REQUEST_URI} !^/admin
+    RewriteCond %{REQUEST_URI} !^/blog
+    RewriteCond %{REQUEST_URI} !^/_debugbar
+    RewriteCond %{REQUEST_URI} !\.(css|js|gif|ico|jpg|png|swf|txt)$
     RewriteCond %{REQUEST_METHOD} !POST
-    RewriteRule ^ %1/ [L,R=301]
+    RewriteRule ^ %{ENV:proto}://%{HTTP_HOST}%{REQUEST_URI}/ [L,R=301]
     
     # Handle Front Controller...
     RewriteCond %{REQUEST_FILENAME} !-d
